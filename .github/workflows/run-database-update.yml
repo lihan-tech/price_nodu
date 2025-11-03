@@ -1,0 +1,62 @@
+name: Run Database Update (with Telegram Notification)
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "30 13 * * 1-5"   # 7:00 PM IST (Mon–Fri)
+
+jobs:
+  run-database-job:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout your repository
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Step 2: Set up Python
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      # Step 3: Install required dependencies
+      - name: Install dependencies
+        run: |
+          if [ -f "requirement.txt" ]; then
+            echo "📦 Installing from requirement.txt..."
+            pip install -r requirement.txt
+          else
+            echo "⚠️ No requirement.txt found. Skipping dependency install."
+          fi
+
+      # Step 4: Run your Python script
+      - name: Run nandu_price_nodu.py
+        env:
+          # --- Telegram credentials ---
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+
+          # --- Cloudflare R2 credentials ---
+          R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
+          R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+
+          # --- Fyers credentials (optional, if your code uses them) ---
+          FYERS_CLIENT_ID: ${{ secrets.FYERS_CLIENT_ID }}
+          FYERS_ACCESS_TOKEN: ${{ secrets.FYERS_ACCESS_TOKEN }}
+        run: |
+          echo "🚀 Running database update script..."
+          python "Code/nandu_price_nodu.py"
+
+      # Step 5: Optional — Upload generated files for review
+      - name: Upload output files
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: output-files
+          path: |
+            **/*.csv
+            **/*.xlsx
+            **/*.log
+          if-no-files-found: ignore
