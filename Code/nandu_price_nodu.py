@@ -59,7 +59,7 @@ excel_file_path ='price_nodu/Bomma/Symbols 2022.xlsx'
 output_folder_path ='price_nodu/Bomma/Price/Day wise'
 no_symbols_file_path ='price_nodu/Bomma/Price/No download/No symbols.xlsx'
 error_log_file_path ='price_nodu/Bomma/Price/error/Error log.xlsx'
-log_folder_path ='price_nodu/Bomma/Price2'
+log_folder_path ='price_nodu/Bomma'
 
 # Ensure folders exist
 os.makedirs(output_folder_path, exist_ok=True)
@@ -333,6 +333,7 @@ try:
 except Exception as e:
     print(f"❌ An error occurred: {e}")
     send_telegram_message(f"❌ GitHub Database price failed: {e}")
+
 
 
 
