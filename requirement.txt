@@ -1,4 +1,6 @@
-botocore.client
-datetime
-fyers_apiv3
-import
+boto3
+botocore
+fyers-apiv3
+pandas
+pytz
+requests
