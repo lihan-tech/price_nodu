@@ -1,6 +1,8 @@
 boto3
 botocore
+openpyxl
 fyers-apiv3
 pandas
 pytz
 requests
+
