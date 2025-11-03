@@ -1,4 +1,4 @@
-name: Run Database Update (with Telegram Notification)
+name: Run Database Update (Auto Folder + Telegram)
 
 on:
   workflow_dispatch:
@@ -20,17 +20,18 @@ jobs:
         with:
           python-version: "3.12"
 
-      # Step 3: Install required dependencies
+      # Step 3: Install dependencies
       - name: Install dependencies
         run: |
           if [ -f "requirement.txt" ]; then
             echo "📦 Installing from requirement.txt..."
             pip install -r requirement.txt
           else
-            echo "⚠️ No requirement.txt found. Skipping dependency install."
+            echo "⚠️ No requirement.txt found. Skipping install."
           fi
 
-      # Step 4: Run your Python script
+      # ✅ Step 4: Run your Python script
+      # (The Python code itself will create folders if not there)
       - name: Run nandu_price_nodu.py
         env:
           # --- Telegram credentials ---
@@ -42,14 +43,14 @@ jobs:
           R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
           R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
 
-          # --- Fyers credentials (optional, if your code uses them) ---
+          # --- Fyers credentials (optional) ---
           FYERS_CLIENT_ID: ${{ secrets.FYERS_CLIENT_ID }}
           FYERS_ACCESS_TOKEN: ${{ secrets.FYERS_ACCESS_TOKEN }}
         run: |
           echo "🚀 Running database update script..."
           python "Code/nandu_price_nodu.py"
 
-      # Step 5: Optional — Upload generated files for review
+      # Step 5: Optional — Upload any generated output/logs
       - name: Upload output files
         if: always()
         uses: actions/upload-artifact@v4
